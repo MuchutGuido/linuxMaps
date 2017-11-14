@@ -5,13 +5,25 @@ var io = require('socket.io')(server);
 
 app.use(express.static('client'));
 
+var fs = require('fs');
+var awk = require('awk');
+var archivo = __dirname + '/db/escuelas.csv';
+
+function resultado(va){
+  var sc = 'BEGIN {FS=","} /'+ va +'/ { print $9 $10 } END {print NR}';
+  var data = fs.readFileSync(archivo);
+  var result = awk(sc, data);
+  //console.log(result.exit_code); // imprime cero, ni idea qu ess
+  console.log(result.stdout);
+  //console.log(result.stderr);
+}
+
 io.on('connection', function(socket){
   console.log('Alguien se ha conectado con socket');
-  socket.emit('busqueda', {
-    id: 1,
-    text: "Hola soy un mensaje",
-    author: "Muchut Guido"
-  })
+
+  socket.on('consultaN', function(data){
+    socket.emit('busqueda', resultado(data))
+  });
 });
 
 server.listen(8080,function(){
