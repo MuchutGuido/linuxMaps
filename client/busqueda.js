@@ -1,7 +1,8 @@
 var socket = io.connect('http://localhost:8080', {'forceNew': true});
-
+var pepe;
 socket.on('busqueda', function(data){
-  return "ESCUELA NRO 1205"
+  pepe = data;
+  return document.getElementById('busqueda').innerHTML = data;
 });
 
 function consulta(e) {
